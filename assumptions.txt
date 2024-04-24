@@ -1,0 +1,54 @@
+1. Scenario point 1 does not state if the Outcome File is required to be stored anywhere
+- it is assumed therefore that it is not required to store the submitted file, but if this
+is a requirement, the content of the file could be stored to the request logging database,
+or an AWS S3 bucket if deploying to AWS
+
+2. Scenario point 2 states that REST must be used to trigger the application, by sending the
+initial file using HTTP POST.
+- it is assumed that 'sending' means that the content of the file is to be uploaded as
+'multipart form data' (using enctype="multipart/form-data") as this is typically how files are sent
+using an HTTP request.
+- however, since the scenario does not specifically mention 'multipart data' or use the word 'upload',
+given time we'll implement 2 handlers in the RestController that support multipart data upload
+and uploading by sending the text of the file in the body of an HTTP POST request
+
+3. Similarly, Scenario point 3 states that the end file needs to be 'passed back to the user', but
+doesn't clarify if this means the JSON response is just sent as a typical Content-Type 'application/json'
+response, or if the request needs to trigger a file download.
+It is assumed therefore that the solution will
+- respond with an application/json response if the RestController is called with a POST containing the
+text of the input file in the body
+- or, respond with a redirect to a file download uri containing the OutcomeFile.json if the request
+if the RestController is called with a multipart/form-data request containing the EntryFile.txt as a 
+file upload.
+
+4. It is assumed that where Scenario point 3 states that the EntryFile is to be 'parsed' that
+the only parsing required is to extract the required fields from the delimited values, and that
+no other parsing is required (none is specified)
+
+5. It is assumed that the size of the EntryFile is a reasonable size to be sent within the 
+limitations of an HTTP POST request, and that the parsing the request and creating the OutcomeFile
+response can be completed within a reasonable 1-2 secs response time that is expected for a
+typcial HTTP request/response. If the size of the EntryFile is greater than say 500 lines,
+the solution proposed here may not be appropriate an an alternative approach would be more
+appropriate. For example:
+- upload EntryFile as a separate step, respond to user with success of the file upload
+- parse and create the OutcomeFile asynchronously as a background task
+- notify user when OutcomeFile is complete and ready for download, via WebSocket notification
+to a web app, or other notification using SMS text message or email, providing link to the download
+
+6. Scenario point 5 - it is assumed that the feature flag to skip the validation is a 
+deploy time property, and that it is not required that the validation feature can be toggled
+on/off dynamically at runtime.
+
+7. It is assumed that the 'Likes' value in the EntryFile is always a single value since there
+is no example of the data being shown containing a list of multiple values, and therefore this
+value does not require parsing the noun part (e.g. 'Apricots') from the raw string (e.g. 'Likes
+Apricots')
+
+8. Similarly is is assumed the Transport value is also a single value, and does not require
+additional parsing (for valid transport types, or to extract the noun (e.g. 'Bike') from the
+raw string (e.g. 'Rides a' and 'bike')
+
+9. There is no requirement stated for authentication or authorization so none has been implemented. If needed, it
+could be added using Spring Security.
