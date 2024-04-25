@@ -1,6 +1,12 @@
 package kh.springbootassessment.fileparser.data;
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 /**
  * Represents a single item in the generated response file output.
@@ -19,7 +25,7 @@ public class ResponseFileItem {
 	
 	private String name;
 	private String transport;
-	private String topSpeed;
+	private BigDecimal topSpeed;
 	
 	@JsonProperty("Name")
 	public String getName() {
@@ -38,10 +44,10 @@ public class ResponseFileItem {
 	}
 	
 	@JsonProperty("TopSpeed")
-	public String getTopSpeed() {
+	public BigDecimal getTopSpeed() {
 		return topSpeed;
 	}
-	public void setTopSpeed(String topSpeed) {
+	public void setTopSpeed(BigDecimal topSpeed) {
 		this.topSpeed = topSpeed;
 	}
 }
