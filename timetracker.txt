@@ -1,1 +1,4 @@
-24/4/24 3:30pm - 4:30pm = 1 hour
+24/4/24 3:30pm - 4:30pm = 1 hour - assumptions and starting skeleton of app
+24/4/24 6-8pm = 1 hour - added parsing of input data and Spring Data repository for logging
+25/4/24 10-11am = 1 hour - refined assumptions
+25/4/24 11am- 
