@@ -4,10 +4,6 @@ import java.math.BigDecimal;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
 /**
  * Represents a single item in the generated response file output.
  * 

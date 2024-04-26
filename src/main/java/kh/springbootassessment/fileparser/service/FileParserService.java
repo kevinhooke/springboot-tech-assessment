@@ -37,6 +37,12 @@ public class FileParserService {
 	@Autowired
 	private RequestLogRepository logRepository;
 	
+	/**
+	 * Parses and validates the submitted EntryFile.
+	 * 
+	 * @param fileContent
+	 * @return
+	 */
 	public List<ResponseFileItem> parseFileContent(String fileContent) {
 		
 		this.validator.validateFile(fileContent);
