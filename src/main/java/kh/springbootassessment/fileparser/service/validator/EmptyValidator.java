@@ -1,9 +1,10 @@
-package kh.springbootassessment.fileparser.service;
+package kh.springbootassessment.fileparser.service.validator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import kh.springbootassessment.fileparser.data.RequestSourceValidationResult;
+import kh.springbootassessment.fileparser.service.validator.FileValidator;
 
 
 public class EmptyValidator implements FileValidator {

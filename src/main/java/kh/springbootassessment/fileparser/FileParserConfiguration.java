@@ -4,9 +4,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import kh.springbootassessment.fileparser.service.EmptyValidator;
-import kh.springbootassessment.fileparser.service.EntryFileValidator;
-import kh.springbootassessment.fileparser.service.FileValidator;
+import kh.springbootassessment.fileparser.service.validator.EmptyValidator;
+import kh.springbootassessment.fileparser.service.validator.EntryFileValidator;
+import kh.springbootassessment.fileparser.service.validator.FileValidator;
 
 @Configuration
 public class FileParserConfiguration {

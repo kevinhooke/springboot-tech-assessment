@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import kh.springbootassessment.fileparser.data.ResponseFileItem;
+import kh.springbootassessment.fileparser.service.exception.FileContentEmptyException;
+import kh.springbootassessment.fileparser.service.exception.FileContentMissingFieldsException;
+import kh.springbootassessment.fileparser.service.exception.InvalidFieldValueException;
 
 @SpringBootTest
 public class FileParserServiceTest {

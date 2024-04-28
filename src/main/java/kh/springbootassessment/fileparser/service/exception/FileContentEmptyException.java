@@ -1,4 +1,4 @@
-package kh.springbootassessment.fileparser.service;
+package kh.springbootassessment.fileparser.service.exception;
 
 /**
  * RuntimeException indicates validation failure if submitted file content

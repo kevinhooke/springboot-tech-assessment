@@ -1,4 +1,4 @@
-package kh.springbootassessment.fileparser.service;
+package kh.springbootassessment.fileparser.service.validator;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -15,6 +15,11 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import kh.springbootassessment.fileparser.data.EntryFileContent;
 import kh.springbootassessment.fileparser.data.RequestSourceValidationResult;
+import kh.springbootassessment.fileparser.service.exception.FileContentEmptyException;
+import kh.springbootassessment.fileparser.service.exception.FileContentMissingFieldsException;
+import kh.springbootassessment.fileparser.service.exception.InvalidFieldValueException;
+import kh.springbootassessment.fileparser.service.exception.SourceRequestBlockedCountryCodeException;
+import kh.springbootassessment.fileparser.service.exception.SourceRequestBlockedISPExcpetion;
 
 public class EntryFileValidator implements FileValidator {
 
@@ -50,9 +55,6 @@ public class EntryFileValidator implements FileValidator {
 		RequestSourceValidationResult result = restTemplate
 				  .getForObject(ipValidationRootUrl + IP_VALIDATION_URL, RequestSourceValidationResult.class, ip);
 		if(result.getStatus().equals("success")) {
-			
-			
-			//TODO return a payload error message for each of the errors
 			
 			//check for blocked origin country code (configured in application.properties: ip.origin.block.countrycodes
 			if(this.blockedCountryCodes.contains(result.getCountryCode())) {

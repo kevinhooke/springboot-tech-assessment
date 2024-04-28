@@ -160,6 +160,11 @@ public class FileParserControllerTest {
 				.andExpect(MockMvcResultMatchers.jsonPath("$[2].TopSpeed").value("15.3"));
 	}
 	
+	
+	//TODO missing input fields test
+	
+	//TODO field validation test
+	
 	/**
 	 * Tests ip source validation when country code is US (in blocked country code list): 150.222.234.54
 	 * 
@@ -181,7 +186,8 @@ public class FileParserControllerTest {
 					return request;
 				}).contentType(MediaType.TEXT_PLAIN).content(LINES1).accept(MediaType.APPLICATION_JSON))
 				//expect an HTTP 403 response because of blocked country code validation error
-				.andExpect(status().is(403));
+				.andExpect(status().is(403))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Error: request rejected. IP address from blocked country code"));;
 	}
 	
 	
@@ -208,7 +214,8 @@ public class FileParserControllerTest {
 				}).contentType(MediaType.TEXT_PLAIN).content(LINES1).accept(MediaType.APPLICATION_JSON))
 		
 				//expect an HTTP 403 response because of blocked ISP validation error
-				.andExpect(status().is(403));
+				.andExpect(status().is(403))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Error: request rejected, IP address from blocked ISP/Data Center IP range"));;
 	}
 	
 	/**
@@ -234,7 +241,8 @@ public class FileParserControllerTest {
 				}).contentType(MediaType.TEXT_PLAIN).content(LINES1).accept(MediaType.APPLICATION_JSON))
 		
 				//expect an HTTP 403 response because of blocked ISP validation error
-				.andExpect(status().is(403));
+				.andExpect(status().is(403))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Error: request rejected, IP address from blocked ISP/Data Center IP range"));;
 	}
 	
 	/**
@@ -260,7 +268,8 @@ public class FileParserControllerTest {
 				}).contentType(MediaType.TEXT_PLAIN).content(LINES1).accept(MediaType.APPLICATION_JSON))
 		
 				//expect an HTTP 403 response because of blocked ISP validation error
-				.andExpect(status().is(403));
+				.andExpect(status().is(403))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Error: request rejected, IP address from blocked ISP/Data Center IP range"));
 	}
 	
 	/**
@@ -286,7 +295,8 @@ public class FileParserControllerTest {
 				}).contentType(MediaType.TEXT_PLAIN).content(LINES1).accept(MediaType.APPLICATION_JSON))
 		
 				//expect an HTTP 403 response because of blocked ISP validation error
-				.andExpect(status().is(403));
+				.andExpect(status().is(403))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Error: request rejected. IP address from blocked country code"));
 	}
 
 	/**
@@ -312,6 +322,7 @@ public class FileParserControllerTest {
 				}).contentType(MediaType.TEXT_PLAIN).content(LINES1).accept(MediaType.APPLICATION_JSON))
 		
 				//expect an HTTP 403 response because of blocked ISP validation error
-				.andExpect(status().is(403));
+				.andExpect(status().is(403))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Error: request rejected. IP address from blocked country code"));;
 	}
 }

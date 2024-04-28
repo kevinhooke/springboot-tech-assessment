@@ -1,4 +1,4 @@
-package kh.springbootassessment.fileparser.service;
+package kh.springbootassessment.fileparser.service.validator;
 
 import kh.springbootassessment.fileparser.data.RequestSourceValidationResult;
 
