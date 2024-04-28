@@ -5,7 +5,7 @@ public class RequestSourceValidationResult {
 	private boolean valid;
 	private String status;
 	private String message;
-	private String country;
+	private String countryCode;
 	private String isp;
 	private String org;
 	private String hosting;
@@ -30,12 +30,12 @@ public class RequestSourceValidationResult {
 		this.message = message;
 	}
 
-	public String getCountry() {
-		return country;
+	public String getCountryCode() {
+		return countryCode;
 	}
 
-	public void setCountry(String country) {
-		this.country = country;
+	public void setCountryCode(String countryCode) {
+		this.countryCode = countryCode;
 	}
 
 	public String getIsp() {

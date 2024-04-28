@@ -1,6 +1,7 @@
 package kh.springbootassessment.fileparser.service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -18,7 +19,7 @@ import kh.springbootassessment.fileparser.data.RequestSourceValidationResult;
 public class EntryFileValidator implements FileValidator {
 
 	private static final int EXPECTED_FIELDS_PER_LINE = 7;
-	private static final String IP_VALIDATION_URL = "/json/{query}?fields=status,message,country,isp,org,hosting,query";
+	private static final String IP_VALIDATION_URL = "/json/{query}?fields=status,message,countryCode,isp,org,hosting,query";
 	private static final Logger logger = LoggerFactory.getLogger(EntryFileValidator.class);
 	
 	/**
@@ -26,6 +27,13 @@ public class EntryFileValidator implements FileValidator {
 	 */
 	@Value("${ip-api.root.url}")
 	private String ipValidationRootUrl;
+	
+	@Value("${ip.origin.block.countrycodes}")
+	private List<String> blockedCountryCodes;
+
+	@Value("${ip.origin.block.isps}")
+	private List<String> blockedISPs;
+
 	
 	public EntryFileValidator() {
 		logger.info("EntryFileValidator instantiated...");
@@ -42,8 +50,14 @@ public class EntryFileValidator implements FileValidator {
 		if(result.getStatus().equals("success")) {
 			
 			//check for blocked origin country code (configured in application.properties: ip.origin.block.countrycodes
+			if(this.blockedCountryCodes.contains(result.getCountryCode())) {
+				throw new SourceRequestBlockedCountryCodeException();
+			}
 			
 			//check for blocked origin from cloud providers (configured in application.properties: ip.origin.block.isps
+			if(this.blockedISPs.contains(result.getIsp())) {
+				throw new SourceRequestBlockedISPExcpetion();
+			}
 			
 			result.setValid(true);
 		}
