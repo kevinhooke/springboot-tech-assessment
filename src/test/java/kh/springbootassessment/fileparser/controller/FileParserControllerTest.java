@@ -2,9 +2,10 @@ package kh.springbootassessment.fileparser.controller;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.maciejwalkowiak.wiremock.spring.ConfigureWireMock;
@@ -50,6 +50,10 @@ public class FileParserControllerTest {
 
 	private static final String LINES1 = "18148426-89e1-11ee-b9d1-0242ac120002|1X1D14|John Smith|Likes Apricots|Rides A Bike|6.2|12.1 ";
 
+	private static final String LINES1_INVALID_UUID = "18148426|1X1D14|John Smith|Likes Apricots|Rides A Bike|6.2|12.1 ";
+	
+	private static final String LINES1_INVALID_UUID_ID = "18148426|12345678900|John Smith|Likes Apricots|Rides A Bike|6.2|12.1 ";
+	
 	private static final String LINES2 =
 			"18148426-89e1-11ee-b9d1-0242ac120002|1X1D14|John Smith|Likes Apricots|Rides A Bike|6.2|12.1 \n3ce2d17b-e66a-4c1e-bca3-40eb1c9222c7|2X2D24|Mike Smith|Likes Grape|Drives an SUV|35.0|95.5 ";
 			
@@ -163,7 +167,61 @@ public class FileParserControllerTest {
 	
 	//TODO missing input fields test
 	
-	//TODO field validation test
+	/**
+	 * Tests the Bean Validation rules on input message with 1 field (uuid) invalid (according to assumed validation rule of min=36, max 36)
+	 * 
+	 * Expected a 500 HTTP status code with error message "Error: invalid value(s) in submitted EntryFile data" plus details of the field name
+	 * and error returned from the Bean Validation error.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	void testEntryFile_invalidUUID() throws Exception {
+
+		// WireMock setup - mock response from ip-adi
+		wiremock.stubFor(get("/json/1.1.1.1?fields=status,message,countryCode,isp,org,hosting,query")
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(
+						"""
+							{"status":"success","message":"WireMock response","countryCode":"AU","isp":"Cloudflare, Inc","org":"APNIC and Cloudflare DNS Resolver project","hosting":true,"query":"1.1.1.1"},
+						""")));
+		this.mockMvc.perform(post("/entryfile")
+				// mock ip address in HttpRequest
+				.with(request -> {
+					request.setRemoteAddr("1.1.1.1");
+					return request;
+				}).contentType(MediaType.TEXT_PLAIN).content(LINES1_INVALID_UUID).accept(MediaType.APPLICATION_JSON))
+				//expect an HTTP 403 response because of invalid uuid in entryfile line
+				.andExpect(status().is(500))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Error: invalid value(s) in submitted EntryFile data: [ uuid: size must be between 36 and 36], "));
+	}
+	
+	/**
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	void testEntryFile_invalidUUID_ID() throws Exception {
+
+		// WireMock setup - mock response from ip-adi
+		wiremock.stubFor(get("/json/1.1.1.1?fields=status,message,countryCode,isp,org,hosting,query")
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(
+						"""
+							{"status":"success","message":"WireMock response","countryCode":"AU","isp":"Cloudflare, Inc","org":"APNIC and Cloudflare DNS Resolver project","hosting":true,"query":"1.1.1.1"},
+						""")));
+		this.mockMvc.perform(post("/entryfile")
+				// mock ip address in HttpRequest
+				.with(request -> {
+					request.setRemoteAddr("1.1.1.1");
+					return request;
+				}).contentType(MediaType.TEXT_PLAIN).content(LINES1_INVALID_UUID_ID).accept(MediaType.APPLICATION_JSON))
+				// expect an HTTP 403 response because of invalid uuid in entryfile line
+				.andExpect(status().is(500))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.message")
+						.value(Matchers.allOf(
+								Matchers.containsString("Error: invalid value(s) in submitted EntryFile data: "),
+								Matchers.containsString("[ uuid: size must be between 36 and 36]"),
+								Matchers.containsString("[ id: size must be between 1 and 10]"))));
+	}
 	
 	/**
 	 * Tests ip source validation when country code is US (in blocked country code list): 150.222.234.54

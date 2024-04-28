@@ -120,8 +120,7 @@ public class EntryFileValidator implements FileValidator {
 			result = true;
 		}
 		else {
-			//TODO copy validation messages to exception
-			throw new InvalidFieldValueException();
+			throw new InvalidFieldValueException(violations);
 		}
 
 		return result;

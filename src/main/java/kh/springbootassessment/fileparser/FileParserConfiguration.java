@@ -1,15 +1,21 @@
 package kh.springbootassessment.fileparser;
 
+import java.sql.SQLException;
+
+import org.h2.tools.Server;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import kh.springbootassessment.fileparser.interceptor.RequestLoggerInterceptor;
 import kh.springbootassessment.fileparser.service.validator.EmptyValidator;
 import kh.springbootassessment.fileparser.service.validator.EntryFileValidator;
 import kh.springbootassessment.fileparser.service.validator.FileValidator;
 
 @Configuration
-public class FileParserConfiguration {
+public class FileParserConfiguration implements WebMvcConfigurer {
 
 	/**
 	 * Provides the EntryFileValidator implementation of FileValidator if:
@@ -41,5 +47,19 @@ public class FileParserConfiguration {
 		return new EmptyValidator();
 	}
 
+	@Bean
+	public RequestLoggerInterceptor getRequestLoggerInterceptor() {
+		return new RequestLoggerInterceptor();
+	}
 	
+	
+	/**
+	 * Register the RequestLoggerInterceptor to log the incoming requests to the relational database.
+	 * 
+	 */
+	@Override
+    public void addInterceptors(InterceptorRegistry registry)
+    {
+        registry.addInterceptor(this.getRequestLoggerInterceptor());
+    }
 }

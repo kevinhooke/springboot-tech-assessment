@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kh.springbootassessment.fileparser.data.ResponseFileItem;
-import kh.springbootassessment.fileparser.repository.RequestLogRepository;
 import kh.springbootassessment.fileparser.service.validator.FileValidator;
 
 @Service
@@ -35,9 +34,6 @@ public class FileParserService {
 	@Autowired
 	private FileValidator validator;
 	
-	@Autowired
-	private RequestLogRepository logRepository;
-	
 	/**
 	 * Parses and validates the submitted EntryFile.
 	 * 
@@ -54,9 +50,6 @@ public class FileParserService {
 		String[] lines = fileContent.split(INPUT_FILE_NEW_LINE_SPLIT_REGEX);
 		responseFileContent = Arrays.stream(lines).map(line -> parseLine(line))
 			.collect(Collectors.toList());
-		
-		//TODO store request logging to db table
-		
 		
 		return responseFileContent;
 	}
