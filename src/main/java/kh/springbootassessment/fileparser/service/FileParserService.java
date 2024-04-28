@@ -21,7 +21,7 @@ public class FileParserService {
 
 	private static final int INPUT_FILE_NAME_FIELD_POSITION = 2;
 
-	private static final String INPUT_FILE_NEW_LINE = "\\n";
+	private static final String INPUT_FILE_NEW_LINE_SPLIT_REGEX = "[\s]*\\n";
 
 	private static final String INPUT_FILE_FIELD_DELIMITER = "\\|";
 
@@ -50,7 +50,7 @@ public class FileParserService {
 		List<ResponseFileItem> responseFileContent = new ArrayList<>();
 		
 		//split string on newlines
-		String[] lines = fileContent.split(INPUT_FILE_NEW_LINE);
+		String[] lines = fileContent.split(INPUT_FILE_NEW_LINE_SPLIT_REGEX);
 		responseFileContent = Arrays.stream(lines).map(line -> parseLine(line))
 			.collect(Collectors.toList());
 		
@@ -74,9 +74,9 @@ public class FileParserService {
 		String[] fields = line.split(INPUT_FILE_FIELD_DELIMITER);
 		if(this.validator.validateLineContent(fields)) {
 			if(fields != null && fields.length > 0) {
-				result.setName(fields[INPUT_FILE_NAME_FIELD_POSITION]);
-				result.setTransport(fields[INPUT_FILE_TRANSPORT_FIELD_POSITION]);
-				BigDecimal topSpeed = new BigDecimal(fields[INPUT_FILE_TOPSPEED_FIELD_POSITION]);
+				result.setName(fields[INPUT_FILE_NAME_FIELD_POSITION].trim());
+				result.setTransport(fields[INPUT_FILE_TRANSPORT_FIELD_POSITION].trim());
+				BigDecimal topSpeed = new BigDecimal(fields[INPUT_FILE_TOPSPEED_FIELD_POSITION].trim());
 				result.setTopSpeed(topSpeed);
 			}
 		}

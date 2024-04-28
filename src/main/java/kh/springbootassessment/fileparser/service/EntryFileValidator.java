@@ -41,6 +41,8 @@ public class EntryFileValidator implements FileValidator {
 	
 	/**
 	 * Calls ip-api.com to validate source ip for the request.
+	 * @throws SourceRequestBlockedCountryCodeException if source ip is from blocked country code
+	 * @throws SourceRequestBlockedISPExcpetion if source ip is from blocked ISP
 	 */
 	@Override
 	public RequestSourceValidationResult validateSourceIP(String ip) {
@@ -48,6 +50,9 @@ public class EntryFileValidator implements FileValidator {
 		RequestSourceValidationResult result = restTemplate
 				  .getForObject(ipValidationRootUrl + IP_VALIDATION_URL, RequestSourceValidationResult.class, ip);
 		if(result.getStatus().equals("success")) {
+			
+			
+			//TODO return a payload error message for each of the errors
 			
 			//check for blocked origin country code (configured in application.properties: ip.origin.block.countrycodes
 			if(this.blockedCountryCodes.contains(result.getCountryCode())) {
@@ -95,13 +100,13 @@ public class EntryFileValidator implements FileValidator {
 		}
 		else {
 			EntryFileContent lineItem = new EntryFileContent();
-			lineItem.setUuid(fields[0]);
-			lineItem.setId(fields[1]);
-			lineItem.setName(fields[2]);
-			lineItem.setLikes(fields[3]);
-			lineItem.setTransport(fields[4]);
-			lineItem.setAvgSpeed(new BigDecimal(fields[5]));
-			lineItem.setTopSpeed(new BigDecimal(fields[6]));
+			lineItem.setUuid(fields[0].trim());
+			lineItem.setId(fields[1].trim());
+			lineItem.setName(fields[2].trim());
+			lineItem.setLikes(fields[3].trim());
+			lineItem.setTransport(fields[4].trim());
+			lineItem.setAvgSpeed(new BigDecimal(fields[5].trim()));
+			lineItem.setTopSpeed(new BigDecimal(fields[6].trim()));
 			
 			//validate with bean validation validator
 			ValidatorFactory factory = Validation.buildDefaultValidatorFactory();

@@ -46,7 +46,7 @@ public class FileParserController {
 		}
 		else
 		{
-			//TODO
+			//TODO build error response based on exceptions and contained error message
 		}
 
 		
