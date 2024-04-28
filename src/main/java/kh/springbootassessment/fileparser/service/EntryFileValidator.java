@@ -21,6 +21,9 @@ public class EntryFileValidator implements FileValidator {
 	private static final String IP_VALIDATION_URL = "/json/{query}?fields=status,message,country,isp,org,hosting,query";
 	private static final Logger logger = LoggerFactory.getLogger(EntryFileValidator.class);
 	
+	/**
+	 * Root url for ip-api.com is injected from application.properties
+	 */
 	@Value("${ip-api.root.url}")
 	private String ipValidationRootUrl;
 	
@@ -29,7 +32,7 @@ public class EntryFileValidator implements FileValidator {
 	}
 	
 	/**
-	 * Calls ip-addr.com to validate source ip for the request.
+	 * Calls ip-api.com to validate source ip for the request.
 	 */
 	@Override
 	public RequestSourceValidationResult validateSourceIP(String ip) {
@@ -38,7 +41,9 @@ public class EntryFileValidator implements FileValidator {
 				  .getForObject(ipValidationRootUrl + IP_VALIDATION_URL, RequestSourceValidationResult.class, ip);
 		if(result.getStatus().equals("success")) {
 			
-			//TODO add other checks here
+			//check for blocked origin country code (configured in application.properties: ip.origin.block.countrycodes
+			
+			//check for blocked origin from cloud providers (configured in application.properties: ip.origin.block.isps
 			
 			result.setValid(true);
 		}
