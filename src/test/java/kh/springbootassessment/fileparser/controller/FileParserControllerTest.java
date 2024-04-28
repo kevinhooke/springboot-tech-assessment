@@ -2,6 +2,7 @@ package kh.springbootassessment.fileparser.controller;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import org.junit.jupiter.api.Test;
@@ -65,8 +66,13 @@ public class FileParserControllerTest {
 				.andExpect(MockMvcResultMatchers.jsonPath("$[0].TopSpeed").value("12.1"));
 	}
 
+	/**
+	 * Tests ip source validation when country code is US (in blocked country code list)
+	 * 
+	 * Expected result: HTTP status code 403 is returned with error message "Request from blocked country code"
+	 */
 	@Test
-	void testEntryFile_blockedCountryCode_AWS_US() throws Exception {
+	void testEntryFile_blockedCountryCode_ispAWS_countryCodeUS() throws Exception {
 
 		// WireMock setup - mock response from ip-adi
 		wiremock.stubFor(get("/json/150.222.234.54?fields=status,message,countryCode,isp,org,hosting,query")
@@ -81,7 +87,62 @@ public class FileParserControllerTest {
 					return request;
 				}).contentType(MediaType.TEXT_PLAIN).content(LINE1).accept(MediaType.APPLICATION_JSON))
 				//expect an HTTP 403 response because of blocked country code validation error
-				.andExpect(status().is4xxClientError());
+				.andExpect(status().is(403));
+	}
+	
+	
+	/**
+	 * Tests ip source validation when ISP is GCP (in blocked IP list), but country code is valid
+	 * 
+	 * Expected result: HTTP status code 403 is returned with error message "Request from blocked ISP"
+	 */
+	@Test
+	void testEntryFile_blockedCountryCode_ispGCP_countryCodeUK() throws Exception {
+		//TODO
+		fail();
+	}
+	
+	/**
+	 * Tests ip source validation when ISP is Azure (in blocked IP list), but country code is valid
+	 * 
+	 * Expected result: HTTP status code 403 is returned with error message "Request from blocked ISP"
+	 */
+	@Test
+	void testEntryFile_blockedCountryCode_ispAzure_countryCodeUK() throws Exception {
+		//TODO
+		fail();
+	}
+	
+	/**
+	 * Tests ip source validation when ISP is AWS (in blocked IP list), but country code is valid
+	 * 
+	 * Expected result: HTTP status code 403 is returned with error message "Request from blocked ISP"
+	 */
+	@Test
+	void testEntryFile_blockedCountryCode_ispAWS_countryCodeUK() throws Exception {
+		//TODO
+		fail();
+	}
+	
+	/**
+	 * Tests ip source validation when country code is China (CN) (in blocked country code list)
+	 * 
+	 * Expected result: HTTP status code 403 is returned with error message "Request from blocked country code"
+	 */
+	@Test
+	void testEntryFile_blockedCountryCode_countryCodeCN() throws Exception {
+		//TODO
+		fail();
+	}
 
+	/**
+	 * Tests ip source validation when country code is Spain (ES) (in blocked country code list)
+	 * 
+	 * Expected result: HTTP status code 403 is returned with error message
+	 */
+	@Test
+	void testEntryFile_blockedCountryCode_countryCodeES() throws Exception {
+		//TODO
+		fail();
 	}
 }

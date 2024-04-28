@@ -3,9 +3,11 @@ package kh.springbootassessment.fileparser.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +15,7 @@ import kh.springbootassessment.fileparser.data.RequestSourceValidationResult;
 import kh.springbootassessment.fileparser.data.ResponseFileItem;
 import kh.springbootassessment.fileparser.service.FileParserService;
 import kh.springbootassessment.fileparser.service.FileValidator;
+import kh.springbootassessment.fileparser.service.SourceRequestBlockedCountryCodeException;
 
 @RestController
 public class FileParserController {
@@ -33,8 +36,8 @@ public class FileParserController {
 			, produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<ResponseFileItem> parseEntryFile(@RequestBody String entryFileContent, HttpServletRequest request) {
 		
-		List<ResponseFileItem> result = null;
-		
+	List<ResponseFileItem> result = null;
+	
 		String sourceIPAddress = request.getRemoteAddr();
 		RequestSourceValidationResult ipValidationResult = this.validator.validateSourceIP(sourceIPAddress);
 		
@@ -45,8 +48,8 @@ public class FileParserController {
 		{
 			//TODO
 		}
+
 		
 		return result;
-	}
-	
+	}	
 }
