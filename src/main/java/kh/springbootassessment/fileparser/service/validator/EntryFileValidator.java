@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -46,14 +47,33 @@ public class EntryFileValidator implements FileValidator {
 	
 	/**
 	 * Calls ip-api.com to validate source ip for the request.
+	 * 
+	 * Checks if X-FORWARDED-FOR header is populated, if so then use this ip for the validation. This handles
+	 * when SpringBoot service is deployed behind a proxy or web frontend like nginx that forwards the api
+	 * requests through to the service.
+	 * 
 	 * @throws SourceRequestBlockedCountryCodeException if source ip is from blocked country code
 	 * @throws SourceRequestBlockedISPExcpetion if source ip is from blocked ISP
 	 */
 	@Override
-	public RequestSourceValidationResult validateSourceIP(String ip) {
+	public RequestSourceValidationResult validateSourceIP(HttpServletRequest request) {
+		String ipToValidate = null;
+		String forwardedForIp = request.getHeader("X-Forwarded-For");
+		String sourceIPAddress = request.getRemoteAddr();
+		logger.info("validateSourceIP: X-Forwarded-For=[" + forwardedForIp + "], getRemoteAddr: [" + sourceIPAddress + "]");
+		
+		if(forwardedForIp != null && !forwardedForIp.trim().equals("") && !forwardedForIp.trim().equals("null")) {
+			ipToValidate = forwardedForIp;
+			logger.info("... calling ip-api for X-Forwarded-For");
+		}
+		else {
+			ipToValidate = sourceIPAddress;
+			logger.info("... calling ip-api for getRemoteAddr");
+		}
+		
 		RestTemplate restTemplate = new RestTemplate();
 		RequestSourceValidationResult result = restTemplate
-				  .getForObject(ipValidationRootUrl + IP_VALIDATION_URL, RequestSourceValidationResult.class, ip);
+				  .getForObject(ipValidationRootUrl + IP_VALIDATION_URL, RequestSourceValidationResult.class, ipToValidate);
 		if(result.getStatus().equals("success")) {
 			
 			//check for blocked origin country code (configured in application.properties: ip.origin.block.countrycodes

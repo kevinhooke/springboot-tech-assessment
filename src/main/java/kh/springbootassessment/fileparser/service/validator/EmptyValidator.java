@@ -3,8 +3,8 @@ package kh.springbootassessment.fileparser.service.validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.servlet.http.HttpServletRequest;
 import kh.springbootassessment.fileparser.data.RequestSourceValidationResult;
-import kh.springbootassessment.fileparser.service.validator.FileValidator;
 
 
 public class EmptyValidator implements FileValidator {
@@ -16,7 +16,7 @@ public class EmptyValidator implements FileValidator {
 	}
 	
 	@Override
-	public RequestSourceValidationResult validateSourceIP(String ip) {
+	public RequestSourceValidationResult validateSourceIP(HttpServletRequest request) {
 		RequestSourceValidationResult result = new RequestSourceValidationResult();
 		result.setValid(true);
 		return result;

@@ -50,8 +50,7 @@ public class FileParserController {
 		
 	List<ResponseFileItem> result = null;
 	
-		String sourceIPAddress = request.getRemoteAddr();
-		RequestSourceValidationResult ipValidationResult = this.validator.validateSourceIP(sourceIPAddress);
+		RequestSourceValidationResult ipValidationResult = this.validator.validateSourceIP(request);
 		
 		if(ipValidationResult.isValid()) {
 			result = this.fileParserService.parseFileContent(entryFileContent);

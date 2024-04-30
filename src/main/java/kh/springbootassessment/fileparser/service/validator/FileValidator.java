@@ -1,10 +1,11 @@
 package kh.springbootassessment.fileparser.service.validator;
 
+import jakarta.servlet.http.HttpServletRequest;
 import kh.springbootassessment.fileparser.data.RequestSourceValidationResult;
 
 public interface FileValidator {
 
-	public RequestSourceValidationResult validateSourceIP(String ip);
+	public RequestSourceValidationResult validateSourceIP(HttpServletRequest request);
 	
 	/**
 	 * Validates content of the file is not null or empty
